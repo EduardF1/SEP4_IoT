@@ -16,6 +16,8 @@
 #include <task.h>
 //	HIH8120 driver dependency
 #include <hih8120.h>
+//	Semaphore dependency
+#include <semphr.h>
 
 
 
