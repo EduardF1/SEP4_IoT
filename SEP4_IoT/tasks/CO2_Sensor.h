@@ -9,10 +9,16 @@
 #define CO2_SENSOR_H_
 
 
-//	Add driver dependency
-#include <mh_z19.h>
-//	Add event groups dependency
+#include <ATMEGA_FreeRTOS.h>
+//	Event groups interface dependency
 #include <event_groups.h>
+//	Task dependency
+#include <task.h>
+//	Standard int lib. dependency
+#include <stdint.h>
+//	CO2 sensor dependency
+#include <mh_z19.h>
+
 
 //	Callback function for new values measured by the CO2 sensor
 //	ppm - value to be returned

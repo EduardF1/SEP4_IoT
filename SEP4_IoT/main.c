@@ -17,7 +17,7 @@
 #include <semphr.h>
 
 //	Add main task dependency
-#include "application_controller.h"
+#include "APPLICATION_CONTROLLER.h"
 
 #include <FreeRTOSTraceDriver.h>
 #include <stdio_driver.h>

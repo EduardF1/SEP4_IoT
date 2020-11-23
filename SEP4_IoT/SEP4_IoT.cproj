@@ -104,6 +104,7 @@
       <Value>../FreeRTOS/src</Value>
       <Value>../drivers</Value>
       <Value>../stdio</Value>
+      <Value>../tasks</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -135,6 +136,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="stdio\stdio_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\APPLICATION_CONTROLLER.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\APPLICATION_CONTROLLER.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\CO2_Sensor.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\TEMP_HUM_SENSOR.h">
       <SubType>compile</SubType>
     </Compile>
     <None Include="drivers\.git">
@@ -4447,6 +4460,7 @@
     <Folder Include="FreeRTOS\Example\" />
     <Folder Include="FreeRTOS\FreeRTOSTraceDriver\" />
     <Folder Include="FreeRTOS\src\" />
+    <Folder Include="tasks" />
     <Folder Include="stdio\" />
   </ItemGroup>
   <ItemGroup>

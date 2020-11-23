@@ -5,9 +5,11 @@
  *  Author: fisch
  */ 
 
-//	Add event group dependency
+#include <ATMEGA_FreeRTOS.h>
 #include <event_groups.h>
+#include <stdio_driver.h>
 #include "APPLICATION_CONTROLLER.h"
+
 
 //	Private fields (for the event groups that
 //	will be used to synchronize the sensor measurements
@@ -24,7 +26,7 @@ void createApplicationControllerTask(){
 	
 	
 	//	declare CO2 task creation
-	createCO2SensorTask(pvEventHandleMeasure, pvEventHandleNewData);
+	//createCO2SensorTask(pvEventHandleMeasure, pvEventHandleNewData);
 	//	declare TEMP_HUM task creation
-	createTEMP_HUMTask(pvEventHandleMeasure, pvEventHandleNewData);
+	//createTEMP_HUMTask(pvEventHandleMeasure, pvEventHandleNewData);
 }

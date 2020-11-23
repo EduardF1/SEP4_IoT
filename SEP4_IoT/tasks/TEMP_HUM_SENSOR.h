@@ -8,10 +8,15 @@
 #ifndef	TEMP_HUM_SENSOR_H_
 #define TEMP_HUM_SENSOR_H_ 
 
-//	Add driver dependency
-#include <hih8120.h>
-//	Add event groups dependency
+#include "application_controller.h"
+#include <ATMEGA_FreeRTOS.h>
+//	Event groups interface dependency
 #include <event_groups.h>
+//	Task dependency
+#include <task.h>
+//	HIH8120 driver dependency
+#include <hih8120.h>
+
 
 
 /*	A)	Creation of the TEMP_HUM task, takes as arguments two event groups (for synchronization)
