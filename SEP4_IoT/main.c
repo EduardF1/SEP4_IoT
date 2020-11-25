@@ -16,12 +16,19 @@
 #include <ATMEGA_FreeRTOS.h>
 #include <semphr.h>
 
+//	Add main task dependency
+#include "APPLICATION_CONTROLLER.h"
+
 #include <FreeRTOSTraceDriver.h>
 #include <stdio_driver.h>
 #include <serial.h>
 
 // Needed for LoRaWAN
 #include <lora_driver.h>
+
+//	Driver dependencies
+#include <hih8120.h>
+
 
 // define two Tasks
 void task1( void *pvParameters );
@@ -133,7 +140,8 @@ void initialiseSystem()
 /*-----------------------------------------------------------*/
 int main(void)
 {
-	initialiseSystem(); // Must be done as the very first thing!!
+	//	Initialize controller task	
+	createApplicationControllerTask();
 	printf("Program Started!!\n");
 	vTaskStartScheduler(); // Initialise and run the freeRTOS scheduler. Execution should never return from here.
 
