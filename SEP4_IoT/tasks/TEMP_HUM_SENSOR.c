@@ -6,37 +6,32 @@
  */ 
 
 #include "TEMP_HUM_SENSOR.h"
-//////////////////////////////////////////////////////////////////////////
-//	TO DO: synchronization with measurement and new data event groups
-//////////////////////////////////////////////////////////////////////////
+
+#define TEMP_HUM_MEASURE_BIT (1 << 0)	//	set bit 0 for measurement event group
+#define TEMP_HUM_READY_BIT (1 << 0)	//	set bit 0 for new data event group
+#define ONE_SECOND_DELAY pdMS_TO_TICKS(1000UL)	//	1 S delay
 
 //	private fields to store the latest measurements
-static int16_t lastTemperature;
-static uint16_t lastHumidity;
+ int16_t lastTemperature;
+ uint16_t lastHumidity;
 
 //	private fields (Event group handlers for measuring and retrieving the data)
-static EventGroupHandle_t _pvEventHandleMeasure;
-static EventGroupHandle_t _pvEventHandleNewData;
+ EventGroupHandle_t _pvEventHandleMeasure;
+ EventGroupHandle_t _pvEventHandleNewData;
 
 /*	HIH810 driver return code, needs to be verified
 	continuously
 */
-static hih8120_driverReturnCode_t hih8120_returnCode;
+ hih8120_driverReturnCode_t hih8120_returnCode;
 //	declare TEMP_HUM_SENSOR task TCB
-static TaskHandle_t _TEMP_HUMSensorTaskHandle;
+ TaskHandle_t _TEMP_HUMSensorTaskHandle;
 
-static SemaphoreHandle_t xTestSemaphore;
 
 //	Function for initializing the driver
-static void setupTEMP_HUMDriver(){
+ void setupTEMP_HUMDriver(){
 		if(HIH8120_OK == hih8120_create())
 		{
-			xTestSemaphore = xSemaphoreCreateMutex();  // Create a mutex semaphore.
-			if ( ( xTestSemaphore ) != NULL )
-			{
-				printf("HIH8120 driver successfully created/n"); // stdio functions are not reentrant (it blocks)- Should normally be protected by MUTEX
-				xSemaphoreGive( ( xTestSemaphore ) );  // Make the mutex available for use, by initially "Giving" the Semaphore.
-			}
+				printf("HIH8120 driver successfully created/n"); //	Inform that the driver was initialized
 		}
 }
 
@@ -64,50 +59,62 @@ void createTEMP_HUMTask(EventGroupHandle_t pvEventHandleMeasure, EventGroupHandl
 		setupTEMP_HUMDriver();
 		
 		xTaskCreate(
-		temp_humSensorTask(),	//	function that implements the task
+		temp_humSensorTask(),	//	function that implements the task body
 		(const portCHAR*) "TEMP_HUM",	//	task name
-		configMINIMAL_STACK_SIZE,		
-		NULL,
-		configMAX_PRIORITIES - 3,	
-		&_TEMP_HUMSensorTaskHandle);
+		configMINIMAL_STACK_SIZE,		//	task stack size (in words)
+		NULL,	//	parameters
+		configMAX_PRIORITIES - 3,	//	priority at which the task is created	
+		&_TEMP_HUMSensorTaskHandle);	//	task handle (TCB)
 }
 
-//	function to create the TEMP_HUM_SENSOR task externally
-void temp_humSensorTask(){
+//	function to create the TEMP_HUM_SENSOR task body
+void temp_humSensorTask(void *pvParameters){
 	for(;;){
-		
-			hih8120_returnCode = hih8120_wakeup();
-			if ( HIH8120_OK != hih8120_returnCode )
-			{
-				// Something went wrong
-				// Investigate the return code further
-			}
-			vTaskDelay(1000UL/15);	//	delay for 66.(6) ms, the driver needs minimum 50 ms
-
-			hih8120_returnCode = hih8120_measure();
-			if ( HIH8120_OK !=  hih8120_returnCode)
-			{
-			// Something went wrong
-			// Investigate the return code further
-			}
-			vTaskDelay(1000UL/100);	//	delay for 10 ms
+			/*	parameters:
+			1)	_pvEventHandleMeasure - event group identifier
+			2)	TEMP_HUM_MEASURE_BIT - bits waited for
+			3)	pdTRUE - set true for clear bits before return
+			4)	pdTRUE - set true for wait bits to be set
+			5)	portMAX_DELAY - delay indefinitely
+			*/
 			
-			//	Get the measurements
-			if( hih8120_returnCode == HIH8120_OK)
+			xEventGroupWaitBits(_pvEventHandleMeasure, TEMP_HUM_MEASURE_BIT, pdTRUE, pdTRUE, portMAX_DELAY);
+			
+			hih8120_returnCode = hih8120_wakeup();	// after wakeup call, > 50 ms are needed for the sensor to be ready
+			vTaskDelay(ONE_SECOND_DELAY/19);	//	delay for 52.6 ms, the driver needs minimum 50 ms
+
+			hih8120_returnCode = hih8120_measure();	// after measurement call, > 1 ms is needed to feth the result from the sensor
+			vTaskDelay(ONE_SECOND_DELAY/95);	//	delay for 10.5 ms (a measurement requires > 1 ms to poll the result from the sensor)
+
+			//	Verify HIH8120 return code (HIH8120_OK if the measurement was done)
+			//	If the measurement was not done, repeat (try again) for up to 10 attempts
+
+			if(HIH8120_OK != hih8120_returnCode)
+			{
+				int flag = 0;
+				do 
+				{
+					hih8120_returnCode = hih8120_measure();	//	attempt for measurement
+					vTaskDelay(ONE_SECOND_DELAY/95);	//	delay for 10.5 ms (a measurement requires > 1 ms to poll the result from the sensor)
+					flag++;
+				} while ((flag < 10) && (HIH8120_TWI_BUSY == hih8120_returnCode));	//	up to 10 times (and if the two wire/I2C interface is busy)
+			}
+			else if(hih8120_returnCode == HIH8120_OK)	//	if the initial measurement did occur
 			{
 				lastTemperature = hih8120_getTemperature_x10();	//	return Temperature C [x10], returned value : int16_t
-				lastHumidity = hih8120_getHumidityPercent_x10();		//	return Relative humidity % [x10], returned value : uint16_t	
+				lastHumidity = hih8120_getHumidityPercent_x10();		//	return Relative humidity % [x10], returned value : uint16_t
+				xEventGroupSetBits(_pvEventHandleNewData, TEMP_HUM_READY_BIT);	//	set bit 0 in the New Data event group (Synchronize the new measurement of the HIH8120 sensor)
 			}
 		}
-	vTaskDelete(_TEMP_HUMSensorTaskHandle); //	delete the task by passing the TCB to vTaskDelete
+	vTaskDelete(_TEMP_HUMSensorTaskHandle); //	delete the task after it is finished by passing the TCB to vTaskDelete 
 }
 
-//	function to return the newest value for the measured temperature from HIH8120 (temperature and humidity driver)
+//	function to return the newest value for the measured temperature
 int16_t getTemperature(){
 	return lastTemperature;
 }
 
-//	function to return the newest value for the measured humidity from HIH8120 (temperature and humidity driver)
+//	function to return the newest value for the measured humidity
 uint16_t getHumidity(){
 	return lastHumidity;
 }

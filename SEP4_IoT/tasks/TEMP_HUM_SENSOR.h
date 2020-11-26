@@ -8,7 +8,7 @@
 #ifndef	TEMP_HUM_SENSOR_H_
 #define TEMP_HUM_SENSOR_H_ 
 
-#include "application_controller.h"
+#include "APPLICATION_CONTROLLER.h"
 #include <ATMEGA_FreeRTOS.h>
 //	Event groups interface dependency
 #include <event_groups.h>
@@ -16,8 +16,8 @@
 #include <task.h>
 //	HIH8120 driver dependency
 #include <hih8120.h>
-//	Semaphore dependency
-#include <semphr.h>
+//	Standard I/O dependency
+#include <stdio.h>
 
 
 
@@ -35,4 +35,4 @@ int16_t getTemperature();
 //	function to return the newest value for the measured humidity from HIH8120 (temperature and humidity driver)
 uint16_t getHumidity();
 
-#endif	TEMP_HUM_SENSOR_H_
+#endif /* TEMP_HUM_SENSOR_H_ */
