@@ -12,26 +12,27 @@
 #define ONE_SECOND_DELAY pdMS_TO_TICKS(1000UL)	//	1 S delay
 
 //	private fields to store the latest measurements
- int16_t lastTemperature;
- uint16_t lastHumidity;
+ static int16_t lastTemperature;
+ static uint16_t lastHumidity;
 
 //	private fields (Event group handlers for measuring and retrieving the data)
- EventGroupHandle_t _pvEventHandleMeasure;
- EventGroupHandle_t _pvEventHandleNewData;
+static EventGroupHandle_t _pvEventHandleMeasure;
+static EventGroupHandle_t _pvEventHandleNewData;
 
 /*	HIH810 driver return code, needs to be verified
 	continuously
 */
- hih8120_driverReturnCode_t hih8120_returnCode;
+ static hih8120_driverReturnCode_t hih8120_returnCode;
 //	declare TEMP_HUM_SENSOR task TCB
- TaskHandle_t _TEMP_HUMSensorTaskHandle;
+ static TaskHandle_t _TEMP_HUMSensorTaskHandle;
 
+void temp_humSensorTask(void *pvParameters);
 
 //	Function for initializing the driver
- void setupTEMP_HUMDriver(){
+ static void setupTEMP_HUMDriver(){
 		if(HIH8120_OK == hih8120_create())
 		{
-				printf("HIH8120 driver successfully created/n"); //	Inform that the driver was initialized
+				printf("HIH8120 driver successfully created \n"); //	Inform that the driver was initialized
 		}
 }
 
@@ -59,7 +60,7 @@ void createTEMP_HUMTask(EventGroupHandle_t pvEventHandleMeasure, EventGroupHandl
 		setupTEMP_HUMDriver();
 		
 		xTaskCreate(
-		temp_humSensorTask(),	//	function that implements the task body
+		temp_humSensorTask,	//	function that implements the task body
 		(const portCHAR*) "TEMP_HUM",	//	task name
 		configMINIMAL_STACK_SIZE,		//	task stack size (in words)
 		NULL,	//	parameters

@@ -8,7 +8,7 @@
 #ifndef	TEMP_HUM_SENSOR_H_
 #define TEMP_HUM_SENSOR_H_ 
 
-#include "APPLICATION_CONTROLLER.h"
+
 #include <ATMEGA_FreeRTOS.h>
 //	Event groups interface dependency
 #include <event_groups.h>
