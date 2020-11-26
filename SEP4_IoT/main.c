@@ -13,32 +13,31 @@
 
 #include <event_groups.h>
 #include "TEMP_HUM_SENSOR.h"
+#include "CO2_SENSOR.h"
 
 //	Private event group variables for synchronization of task measurement and data collection
 static EventGroupHandle_t pvEventHandleMeasure;
 static EventGroupHandle_t pvEventHandleNewData;
 
 
-void initializeSystem(){
-	
+void initializeSystem()
+{
 	pvEventHandleMeasure = xEventGroupCreate();
 	pvEventHandleNewData = xEventGroupCreate();
 	createTEMP_HUMTask(pvEventHandleMeasure, pvEventHandleNewData);
+	createCO2SensorTask(pvEventHandleMeasure, pvEventHandleNewData);
 }
 
 /*-----------------------------------------------------------*/
 int main(void)
 {
-	
 	trace_init();
 	stdio_create(ser_USART0);
-	printf("Program Started!!\n");
+	printf("Program executed! \n");
 	initializeSystem();
-	vTaskStartScheduler(); // Initialise and run the freeRTOS scheduler. Execution should never return from here.
-
+	vTaskStartScheduler(); // Initialize and run the freeRTOS scheduler. Execution should never return from here.
 
 	while (1)
 	{
 	}
 }
-

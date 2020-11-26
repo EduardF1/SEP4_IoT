@@ -38,3 +38,7 @@
 /SEP4_IoT/Debug/tasks/APPLICATION_CONTROLLER.o
 /SEP4_IoT/Debug/tasks/TEMP_HUM_SENSOR.d
 /SEP4_IoT/Debug/tasks/TEMP_HUM_SENSOR.o
+/SEP4_IoT/Debug/loraPayload/LORA_PAYLOAD.d
+/SEP4_IoT/Debug/loraPayload/LORA_PAYLOAD.o
+/SEP4_IoT/Debug/tasks/CO2_SENSOR.d
+/SEP4_IoT/Debug/tasks/CO2_SENSOR.o
