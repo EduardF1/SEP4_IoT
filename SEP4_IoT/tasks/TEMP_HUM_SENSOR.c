@@ -2,7 +2,7 @@
 * TEMP_HUM_SENSOR.c
 *
 * Created: 23/11/2020 11:07:08
-*  Author: Eduard
+*  Author: fisch
 */
 
 #include "TEMP_HUM_SENSOR.h"
