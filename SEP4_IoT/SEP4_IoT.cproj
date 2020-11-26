@@ -121,6 +121,7 @@
       <Value>../drivers</Value>
       <Value>../stdio</Value>
       <Value>../tasks</Value>
+      <Value>../loraPayload</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -152,7 +153,19 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="loraPayload\LORA_PAYLOAD.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="loraPayload\LORA_PAYLOAD.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="stdio\stdio_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\CO2_SENSOR.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\CO2_SENSOR.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="tasks\TEMP_HUM_SENSOR.c">
@@ -4471,6 +4484,7 @@
     <Folder Include="FreeRTOS\Example\" />
     <Folder Include="FreeRTOS\FreeRTOSTraceDriver\" />
     <Folder Include="FreeRTOS\src\" />
+    <Folder Include="loraPayload\" />
     <Folder Include="tasks" />
     <Folder Include="stdio\" />
   </ItemGroup>
