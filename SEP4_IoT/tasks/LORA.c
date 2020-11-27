@@ -149,5 +149,4 @@ void loraUplinkTask(void *pvParameters){
 			}
 		}
 	}
-	vTaskDelete(_lora_uplink_task_handle);
 }
