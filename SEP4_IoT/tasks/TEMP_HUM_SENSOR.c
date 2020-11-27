@@ -83,10 +83,10 @@ void temp_humSensorTask(void *pvParameters)
 		xEventGroupWaitBits(_pvEventHandleMeasure, TEMP_HUM_MEASURE_BIT, pdTRUE, pdTRUE, portMAX_DELAY);
 		
 		hih8120_returnCode = hih8120_wakeup();	// after wakeup call, > 50 ms are needed for the sensor to be ready
-		vTaskDelay(ONE_SECOND_DELAY/19);	//	delay for 52.6 ms, the driver needs minimum 50 ms
+		vTaskDelay(50);	//	delay for 50 ms, the driver needs minimum 50 ms
 
 		hih8120_returnCode = hih8120_measure();	// after measurement call, > 1 ms is needed to feth the result from the sensor
-		vTaskDelay(ONE_SECOND_DELAY/95);	//	delay for 10.5 ms (a measurement requires > 1 ms to poll the result from the sensor)
+		vTaskDelay(10);	//	delay for 10 ms (a measurement requires > 1 ms to poll the result from the sensor)
 
 		//	Verify HIH8120 return code (HIH8120_OK if the measurement was done)
 		//	If the measurement was not done, repeat (try again) for up to 10 attempts
