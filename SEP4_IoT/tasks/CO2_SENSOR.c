@@ -6,9 +6,7 @@
  */ 
 
 #include "CO2_Sensor.h"
-
-#define CO2_MEASURE_BIT (1 << 1) //	set bit 1 for measurement event group
-#define CO2_READY_BIT (1 << 1)   // set bit 1 for new data event group
+#include "macros.h"
 
 // private fields to store the latest measurements
 static uint16_t lastCO2ppm;
@@ -48,7 +46,7 @@ void createCO2SensorTask(EventGroupHandle_t pvEventHandleMeasure, EventGroupHand
 	
 	setupCO2Driver(); // Call the setup function
 	
-	// Create the FreeRTOS task
+	// Create the CO2 task in FreeRTOS
 	xTaskCreate(
 	co2SensorTask,               //	function that implements the task body
 	(const portCHAR *) "CO2",    //	task name

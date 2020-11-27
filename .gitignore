@@ -42,3 +42,5 @@
 /SEP4_IoT/Debug/loraPayload/LORA_PAYLOAD.o
 /SEP4_IoT/Debug/tasks/CO2_SENSOR.d
 /SEP4_IoT/Debug/tasks/CO2_SENSOR.o
+/SEP4_IoT/Debug/tasks/MAIN_TASK.d
+/SEP4_IoT/Debug/tasks/MAIN_TASK.o

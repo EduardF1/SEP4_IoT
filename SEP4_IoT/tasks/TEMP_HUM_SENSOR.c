@@ -6,10 +6,7 @@
 */
 
 #include "TEMP_HUM_SENSOR.h"
-
-#define TEMP_HUM_MEASURE_BIT (1 << 0)	//	set bit 0 for measurement event group
-#define TEMP_HUM_READY_BIT (1 << 0)	//	set bit 0 for new data event group
-#define ONE_SECOND_DELAY pdMS_TO_TICKS(1000UL)	//	1 S delay
+#include "macros.h"
 
 //	private fields to store the latest measurements
 static int16_t lastTemperature;
@@ -29,7 +26,8 @@ static TaskHandle_t _TEMP_HUMSensorTaskHandle;
 void temp_humSensorTask(void *pvParameters);
 
 //	Function for initializing the driver
-static void setupTEMP_HUMDriver(){
+static void setupTEMP_HUMDriver()
+{
 	if(HIH8120_OK == hih8120_create())
 	{
 		printf("HIH8120 driver successfully created \n"); //	Inform that the driver was initialized
@@ -43,7 +41,8 @@ static void setupTEMP_HUMDriver(){
 **** See event_groups.h lines 610 - 688 ****
 */
 //	function to create the TEMP_HUM_SENSOR task externally
-void createTEMP_HUMTask(EventGroupHandle_t pvEventHandleMeasure, EventGroupHandle_t pvEventHandleNewData){
+void createTEMP_HUMTask(EventGroupHandle_t pvEventHandleMeasure, EventGroupHandle_t pvEventHandleNewData)
+{
 	_pvEventHandleMeasure = pvEventHandleMeasure;
 	_pvEventHandleNewData = pvEventHandleNewData;
 	
@@ -73,7 +72,6 @@ void temp_humSensorTask(void *pvParameters)
 {
 	for(;;)
 	{
-	
 		/*	parameters:
 		1)	_pvEventHandleMeasure - event group identifier
 		2)	TEMP_HUM_MEASURE_BIT - bits waited for
@@ -113,11 +111,13 @@ void temp_humSensorTask(void *pvParameters)
 }
 
 //	function to return the newest value for the measured temperature
-int16_t getTemperature(){
+int16_t getTemperature()
+{
 	return lastTemperature;
 }
 
 //	function to return the newest value for the measured humidity
-uint16_t getHumidity(){
+uint16_t getHumidity()
+{
 	return lastHumidity;
 }

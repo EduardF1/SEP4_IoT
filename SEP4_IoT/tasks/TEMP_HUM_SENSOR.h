@@ -20,7 +20,6 @@
 #include <stdio.h>
 
 
-
 /*	A)	Creation of the TEMP_HUM task, takes as arguments two event groups (for synchronization)
 	1)	pvEventHandleMeasure - pointer variable for the measurement event group (will be used together with the CO2 task)
 	2)	pvEventHandleNewData - pointer variable for the data ready event group (will be used together with the CO2 task)

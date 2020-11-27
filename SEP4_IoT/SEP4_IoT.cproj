@@ -41,21 +41,21 @@
       </framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
-    <avrtoolserialnumber>J41800045838</avrtoolserialnumber>
+    <avrtoolserialnumber>J41800046574</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x1E9801</avrdeviceexpectedsignature>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
-          <JtagDbgClock>1300000</JtagDbgClock>
+          <JtagDbgClock>1298731</JtagDbgClock>
         </InterfaceProperties>
         <InterfaceName>JTAG</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
-      <ToolNumber>J41800045838</ToolNumber>
+      <ToolNumber>J41800046574</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
     <avrtoolinterface>JTAG</avrtoolinterface>
-    <avrtoolinterfaceclock>1300000</avrtoolinterfaceclock>
+    <avrtoolinterfaceclock>1298731</avrtoolinterfaceclock>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -122,6 +122,7 @@
       <Value>../stdio</Value>
       <Value>../tasks</Value>
       <Value>../loraPayload</Value>
+      <Value>../macros</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -159,6 +160,9 @@
     <Compile Include="loraPayload\LORA_PAYLOAD.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="macros\macros.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="stdio\stdio_driver.h">
       <SubType>compile</SubType>
     </Compile>
@@ -166,6 +170,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="tasks\CO2_SENSOR.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\MAIN_TASK.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="tasks\MAIN_TASK.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="tasks\TEMP_HUM_SENSOR.c">
@@ -4485,6 +4495,7 @@
     <Folder Include="FreeRTOS\FreeRTOSTraceDriver\" />
     <Folder Include="FreeRTOS\src\" />
     <Folder Include="loraPayload\" />
+    <Folder Include="macros" />
     <Folder Include="tasks" />
     <Folder Include="stdio\" />
   </ItemGroup>
