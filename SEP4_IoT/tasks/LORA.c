@@ -18,7 +18,7 @@ static QueueHandle_t _sendingQueue;
 static SemaphoreHandle_t _main_task_SyncSemphr;
 //	Lora Driver return code (private field)
 static lora_driver_returnCode_t rc;
-//	Buffer 
+//	Buffer
 static char _out_buf[100];
 
 void loraUplinkTask(void *pvParameters);
@@ -134,12 +134,12 @@ void loraUplinkTask(void *pvParameters){
 	{
 		if(rc == LORA_ACCEPTED || rc == LORA_OK || rc == LORA_MAC_TX_OK || rc == LORA_MAC_RX || rc == LORA_NO_FREE_CH || rc == LORA_MAC_ERROR)
 		{
-			
+			xSemaphoreGive(_main_task_SyncSemphr);
 		}
 		
 		if (_sendingQueue != NULL)
 		{
-			if(xQueueReceive(_sendingQueue, &_lora_uplink_payload, portMAX_DELAY) == pdPASS)	
+			if(xQueueReceive(_sendingQueue, &_lora_uplink_payload, portMAX_DELAY) == pdPASS)
 			{
 				status_leds_shortPuls(led_ST4);
 				

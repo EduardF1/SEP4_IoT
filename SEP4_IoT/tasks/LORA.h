@@ -1,9 +1,9 @@
 /*
- * LORA.h
- *
- * Created: 27/11/2020 19:44:17
- *  Author: Eduard
- */ 
+* LORA.h
+*
+* Created: 27/11/2020 19:44:17
+*  Author: Eduard
+*/
 
 
 #ifndef LORA_H_
