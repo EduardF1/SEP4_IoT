@@ -9,6 +9,7 @@
 #ifndef LORA_H_
 #define LORA_H_
 
+
 //	LoRa driver dependency
 #include <lora_driver.h>
 //	Lora transceiver interface dependency for accessing macro
@@ -32,9 +33,6 @@ void setUpLoraDriver();
 
 //	Function to create the Lora task, takes a queue and a semaphore as arguments
 void createLoraTask(QueueHandle_t pQueue, SemaphoreHandle_t main_taskSyncSemphr);
-
-
-
 
 
 #endif /* LORA_H_ */

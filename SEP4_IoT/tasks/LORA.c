@@ -6,7 +6,6 @@
 *  Author: Eduard
 */
 
-
 #include "macros.h"
 #include "LORA.h"
 
@@ -15,14 +14,13 @@ static TaskHandle_t _lora_uplink_task_handle;
 static QueueHandle_t _sendingQueue;
 
 //	Control semaphore
-static SemaphoreHandle_t _main_task_SyncSemphr;
+static SemaphoreHandle_t _main_taskSyncSemphr;
 //	Lora Driver return code (private field)
 static lora_driver_returnCode_t rc;
 //	Buffer
 static char _out_buf[100];
 
 void loraUplinkTask(void *pvParameters);
-
 
 void setUpLoraDriver()
 {
@@ -96,10 +94,10 @@ void setUpLoraDriver()
 	}
 }
 
-void createLoraTask(QueueHandle_t pQueue, SemaphoreHandle_t main_taskSyncSemphr){
-	
+void createLoraTask(QueueHandle_t pQueue, SemaphoreHandle_t main_taskSyncSemphr)
+{
 	_sendingQueue = pQueue;
-	_main_task_SyncSemphr = main_taskSyncSemphr;
+	_main_taskSyncSemphr = main_taskSyncSemphr;
 	_lora_uplink_task_handle = NULL;
 	
 	hal_create(7);	//	give the LED task priority 7
@@ -113,8 +111,8 @@ void createLoraTask(QueueHandle_t pQueue, SemaphoreHandle_t main_taskSyncSemphr)
 	&_lora_uplink_task_handle);
 }
 
-void loraUplinkTask(void *pvParameters){
-	
+void loraUplinkTask(void *pvParameters)
+{
 	//	Hardware rest of LoRaWAN transceiver
 	lora_driver_resetRn2483(1);	//	set reset state to 1 (active)
 	vTaskDelay(2);	//	delay for 2 ms
@@ -134,7 +132,7 @@ void loraUplinkTask(void *pvParameters){
 	{
 		if(rc == LORA_ACCEPTED || rc == LORA_OK || rc == LORA_MAC_TX_OK || rc == LORA_MAC_RX || rc == LORA_NO_FREE_CH || rc == LORA_MAC_ERROR)
 		{
-			xSemaphoreGive(_main_task_SyncSemphr);
+			xSemaphoreGive(_main_taskSyncSemphr);
 		}
 		
 		if (_sendingQueue != NULL)
@@ -143,7 +141,8 @@ void loraUplinkTask(void *pvParameters){
 			{
 				status_leds_shortPuls(led_ST4);
 				
-				//	Send an upload message to the LoRaWAN, arguments: [confirmed true: Send confirmed, else unconfirmed.], payload pointer to payload to be sent.
+				/* Send an upload message to the LoRaWAN, arguments: [confirmed true: Send confirmed, else unconfirmed.], 
+				payload pointer to payload to be sent. */
 				rc = lora_driver_sendUploadMessage(false, &_lora_uplink_payload);
 				printf("Upload Message >%s<\n", lora_driver_mapReturnCodeToText(rc));
 			}

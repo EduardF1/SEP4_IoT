@@ -11,6 +11,8 @@
 
 
 // Declare global macros to use for convenience
+#define LORA_appEUI "CC079E3308C9825F"
+#define LORA_appKEY "6E4724962ED591537C67297734655ED2"
 #define LORA_PAYLOAD_PORT_NO 2                                     // Lora payload port number
 #define TEMP_HUM_MEASURE_BIT (1 << 0)                              // set bit 0 for measurement event group
 #define CO2_MEASURE_BIT (1 << 1)                                   // set bit 1 for measurement event group
@@ -24,9 +26,5 @@
 #define ONE_MINUTE_DELAY pdMS_TO_TICKS(60000UL)
 #define FIVE_MINUTE_DELAY pdMS_TO_TICKS(300000UL)
 
-//	Declare LoRaWAN access values
-#define LORA_appEUI "CC079E3308C9825F"
-#define LORA_appKEY "6E4724962ED591537C67297734655ED2"
-#define LORA_PAYLOAD_PORT_NO 2
 
 #endif /* MACROS_H_ */
