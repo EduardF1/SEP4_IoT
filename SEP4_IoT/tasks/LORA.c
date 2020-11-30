@@ -100,7 +100,7 @@ void createLoraTask(QueueHandle_t pQueue, SemaphoreHandle_t main_taskSyncSemphr)
 	_main_taskSyncSemphr = main_taskSyncSemphr;
 	_lora_uplink_task_handle = NULL;
 	
-	hal_create(7);	//	give the LED task priority 7
+	hal_create(5);	//	give the LED task priority 5
 	lora_driver_create(LORA_USART, NULL);
 	
 	xTaskCreate(loraUplinkTask,
