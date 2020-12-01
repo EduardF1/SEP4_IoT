@@ -94,9 +94,9 @@ void setUpLoraDriver()
 	}
 }
 
-void createLoraTask(QueueHandle_t pQueue, SemaphoreHandle_t main_taskSyncSemphr)
+void createLoraTask(QueueHandle_t sendingQueue, SemaphoreHandle_t main_taskSyncSemphr)
 {
-	_sendingQueue = pQueue;
+	_sendingQueue = sendingQueue;
 	_main_taskSyncSemphr = main_taskSyncSemphr;
 	_lora_uplink_task_handle = NULL;
 	
