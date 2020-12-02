@@ -12,8 +12,6 @@
 #include <ATMEGA_FreeRTOS.h>
 //	Task dependency
 #include <task.h>
-//	Standard bool dependency (needed for flag, will be used to verify the position of the driver)
-#include <stdbool.h>
 #include <stdio.h>
 //	Queue dependency (queue needed for receiving commands)
 #include <queue.h>

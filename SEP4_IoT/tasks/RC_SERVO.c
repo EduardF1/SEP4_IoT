@@ -15,8 +15,6 @@ static QueueHandle_t _rc_servo_queue;
 
 static SemaphoreHandle_t _taskSyncSemphr;
 //	Flag to verify the state/position of the servo
-static bool isRaised;
-
 static int16_t _shaftStatus;
 
 void rc_servoActuatorTask(void* pvParameters);
@@ -30,7 +28,7 @@ static void setupRC_SERVO()
 //	Function to create the RC_SERVO task externally
 void createRC_SERVOTask(QueueHandle_t rc_servo_queue, SemaphoreHandle_t taskSyncSemphr)
 {
-	isRaised = false;	//	initialize the flag with false (default value)
+	_shaftStatus = LOWER; //	initialize flag with 0	(LOWER)
 	_rc_servo_queue = rc_servo_queue;	//	pass the given(argument) queue to the local/module queue field
 	_taskSyncSemphr = taskSyncSemphr;	//	pass the given(argument) semaphore to the field semaphore
 	RC_SERVOAcuatorTaskHandle = NULL;
@@ -60,11 +58,10 @@ void rc_servoActuatorTask(void* pvParameters)
 			{
 				if(command == RAISE)	//	raise/open shaft
 				{
-					_shaftStatus = RAISE;
-					if(isRaised == false)	//	if closed/lowered
+					if(_shaftStatus == LOWER)	//	if closed/lowered
 					{
 						rc_servo_setPosition(0,100);	//	adjust postion to {100 - fully to the right}
-						isRaised = true;	//	set flag to true
+						_shaftStatus = RAISE;	//	set flag to 1/RAISE (Shaft raised)
 					}
 					else
 					{
@@ -76,11 +73,10 @@ void rc_servoActuatorTask(void* pvParameters)
 				
 				else if(command == LOWER)
 				{
-					_shaftStatus = LOWER;
-					if(isRaised == true)
+					if(_shaftStatus == RAISE)
 					{
 						rc_servo_setPosition(0, -100);	//	adjust position to {-100 - fully to the left}
-							isRaised = false;	//	set flag to false after lowering it
+							_shaftStatus = LOWER;	//	set flag to 0/LOWER after lowering it	(Shaft lowered)
 					}
 					else
 					{
@@ -94,6 +90,7 @@ void rc_servoActuatorTask(void* pvParameters)
 	}
 }
 
+//	Function to retrieve the status of the shaft 
 int16_t getShaftStatus()
 {
 	return _shaftStatus;
