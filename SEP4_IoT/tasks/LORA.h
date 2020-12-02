@@ -32,7 +32,7 @@
 void setUpLoraDriver();
 
 //	Function to create the Lora task, takes a queue and a semaphore as arguments
-void createLoraTask(QueueHandle_t pQueue, SemaphoreHandle_t main_taskSyncSemphr);
+void createLoraTask(QueueHandle_t sendingQueue, SemaphoreHandle_t main_taskSyncSemphr);
 
 
 #endif /* LORA_H_ */
