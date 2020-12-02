@@ -17,6 +17,8 @@ static SemaphoreHandle_t _taskSyncSemphr;
 //	Flag to verify the state/position of the servo
 static bool isRaised;
 
+static int16_t _shaftStatus;
+
 void rc_servoActuatorTask(void* pvParameters);
 
 static void setupRC_SERVO()
@@ -58,7 +60,7 @@ void rc_servoActuatorTask(void* pvParameters)
 			{
 				if(command == RAISE)	//	raise/open shaft
 				{
-					
+					_shaftStatus = RAISE;
 					if(isRaised == false)	//	if closed/lowered
 					{
 						rc_servo_setPosition(0,100);	//	adjust postion to {100 - fully to the right}
@@ -74,6 +76,7 @@ void rc_servoActuatorTask(void* pvParameters)
 				
 				else if(command == LOWER)
 				{
+					_shaftStatus = LOWER;
 					if(isRaised == true)
 					{
 						rc_servo_setPosition(0, -100);	//	adjust position to {-100 - fully to the left}
@@ -89,4 +92,9 @@ void rc_servoActuatorTask(void* pvParameters)
 			}
 		}
 	}
+}
+
+int16_t getShaftStatus()
+{
+	return _shaftStatus;
 }
