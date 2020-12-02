@@ -184,6 +184,9 @@
     <Compile Include="tasks\MAIN_TASK.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="tasks\RC_SERVO.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="tasks\RC_SERVO.h">
       <SubType>compile</SubType>
     </Compile>
