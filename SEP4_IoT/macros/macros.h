@@ -26,5 +26,12 @@
 #define ONE_MINUTE_DELAY pdMS_TO_TICKS(60000UL)
 #define FIVE_MINUTE_DELAY pdMS_TO_TICKS(300000UL)
 
+//	Enum variable to determine the position of the RC SERVO actuator
+//	Lower - 0 / Raise - 1
+typedef enum rcServo_Command{
+	LOWER,
+	RAISE
+	}rcServo_Command_t;
+
 
 #endif /* MACROS_H_ */
