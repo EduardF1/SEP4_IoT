@@ -11,6 +11,7 @@
 #include "CO2_Sensor.h"
 #include "TEMP_HUM_SENSOR.h"
 #include "LORA.h"
+#include "LORA_DOWNLINK.h"
 #include "RC_SERVO.h"
 
 static TaskHandle_t main_task_task_handle = NULL;          // TaskHandle for the task
@@ -29,14 +30,8 @@ void mainTask(void *pvParameters);
 
 void createMainTask()
 {
-	main_taskSyncSemphr = xSemaphoreCreateBinary(); // Create a binary semaphore
-	
-	mutexSemphr = xSemaphoreCreateMutex();       // Create a Mutex semaphore
-	
-	if (mutexSemphr != NULL)
-	{
-		xSemaphoreGive(mutexSemphr);             // Make the Mutex available for use, by initially "Giving" the Semaphore.
-	}
+	main_taskSyncSemphr = xSemaphoreCreateBinary();        // Create a binary semaphore
+	mutexSemphr = xSemaphoreCreateMutex();                 // Create a Mutex semaphore
 	
 	pvEventHandleMeasure = xEventGroupCreate();   // Create an event group that triggers the sensors to measure
 	pvEventHandleNewData = xEventGroupCreate();   // Create an event group that indicates that measurements are taken from the sensors
@@ -46,33 +41,39 @@ void createMainTask()
 	
 	downlinkMessageBuffer = xMessageBufferCreate(downlinkMessageBufferSizeBytes);  // Create the message buffer
 	
-	if( downlinkMessageBuffer == NULL )
+	if (main_taskSyncSemphr != NULL &&
+	    mutexSemphr != NULL &&
+		pvEventHandleMeasure != NULL &&
+		pvEventHandleNewData != NULL &&
+		sendingQueue != NULL &&
+		rc_servo_queue != NULL &&
+		downlinkMessageBuffer != NULL)
 	{
-		// There was not enough heap memory space available to create the message buffer.
-		printf("There was not enough heap memory space available to create the down link message buffer. \n");
+		xSemaphoreGive(mutexSemphr);  // Make the Mutex available for use, by initially "Giving" the Semaphore.
+		display_7seg_init(NULL);                                          // Initialize display driver
+		display_7seg_powerUp();                                           // Set to power up mode
+		remainingHeapSpace = xPortGetFreeHeapSize();                      // Get the total amount of heap space that remains unallocated
+		display_7seg_display((float)remainingHeapSpace, 0);               // Display it on the 7 segment display for information
+		
+		createLoraTask(sendingQueue, downlinkMessageBuffer, main_taskSyncSemphr, mutexSemphr);
+		createLoraDownlinkTask(downlinkMessageBuffer, rc_servo_queue, mutexSemphr);
+		createCO2SensorTask(pvEventHandleMeasure, pvEventHandleNewData);  // Create the CO2 sensor task
+		createTEMP_HUMTask(pvEventHandleMeasure, pvEventHandleNewData);   // Create the temperature and humidity sensor task
+		createRC_SERVOTask(rc_servo_queue, mutexSemphr);                  // Create the servo task
+		
+		// Create the main task in FreeRTOS
+		xTaskCreate(mainTask,                         // function that implements the task body
+		(const portCHAR *) "Application Controller",  // task name
+		configMINIMAL_STACK_SIZE + 100,               // task stack size
+		NULL,                                         // pvParameters
+		configMAX_PRIORITIES - 3,                     // Task priority
+		&main_task_task_handle);                      // Task handle
 	}
 	else
 	{
-		// The message buffer was created successfully and can now be used.
-		createLoraTask(sendingQueue, downlinkMessageBuffer, rc_servo_queue, main_taskSyncSemphr, mutexSemphr);
+		// There was not enough heap memory space available.
+		printf("There was not enough heap memory space available to create all tasks. \n");
 	}
-	
-	createCO2SensorTask(pvEventHandleMeasure, pvEventHandleNewData);  // Create the CO2 sensor task
-	display_7seg_init(NULL);                                          // Initialize display driver
-	display_7seg_powerUp();                                           // Set to power up mode
-	createTEMP_HUMTask(pvEventHandleMeasure, pvEventHandleNewData);   // Create the temperature and humidity sensor task
-	createRC_SERVOTask(rc_servo_queue, mutexSemphr);                  // Create the servo task
-	
-	remainingHeapSpace = xPortGetFreeHeapSize();                     // Get the total amount of heap space that remains unallocated
-	display_7seg_display((float)remainingHeapSpace, 0);              // Display it on the 7 segment display for information
-	
-	// Create the main task in FreeRTOS
-	xTaskCreate(mainTask,                         // function that implements the task body
-	(const portCHAR *) "Application Controller",  // task name
-	configMINIMAL_STACK_SIZE + 100,               // task stack size
-	NULL,                                         // pvParameters
-	configMAX_PRIORITIES - 3,                     // Task priority
-	&main_task_task_handle);                      // Task handle
 }
 
 // Task function body

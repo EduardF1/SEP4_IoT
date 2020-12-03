@@ -11,9 +11,7 @@
 
 //	Private fields for the TCB (task handle) and queue handle
 static TaskHandle_t _lora_uplink_task_handle;
-static TaskHandle_t _lora_downlink_task_handle;
 static QueueHandle_t _sendingQueue;
-static QueueHandle_t _rc_servo_queue;
 static MessageBufferHandle_t _downlinkMessageBuffer;
 
 //	Control semaphore
@@ -26,7 +24,6 @@ static lora_driver_returnCode_t rc;
 static char _out_buf[100];
 
 void loraUplinkTask(void *pvParameters);
-void loraDownlinkTask(void *pvParameters);
 
 void setUpLoraDriver()
 {
@@ -102,17 +99,14 @@ void setUpLoraDriver()
 
 void createLoraTask(QueueHandle_t sendingQueue,
                     MessageBufferHandle_t downlinkMessageBuffer,
-                    QueueHandle_t rc_servo_queue,
                     SemaphoreHandle_t main_taskSyncSemphr,
 					SemaphoreHandle_t mutexSemphr)
 {
 	_sendingQueue = sendingQueue;
 	_main_taskSyncSemphr = main_taskSyncSemphr;
-	_rc_servo_queue = rc_servo_queue;
 	_downlinkMessageBuffer = downlinkMessageBuffer;
 	_mutexSemphr = mutexSemphr;
 	_lora_uplink_task_handle = NULL;
-	_lora_downlink_task_handle = NULL;
 	
 	hal_create(5);	//	give the LED task priority 5
 	lora_driver_create(LORA_USART, _downlinkMessageBuffer);
@@ -123,13 +117,6 @@ void createLoraTask(QueueHandle_t sendingQueue,
 	NULL,
 	configMAX_PRIORITIES - 1,
 	&_lora_uplink_task_handle);
-	
-	xTaskCreate(loraDownlinkTask,
-	(const portCHAR *) "LoRaWanDownlink",
-	configMINIMAL_STACK_SIZE + 100,
-	NULL,
-	configMAX_PRIORITIES - 1,
-	&_lora_downlink_task_handle);
 }
 
 void loraUplinkTask(void *pvParameters)
@@ -177,48 +164,6 @@ void loraUplinkTask(void *pvParameters)
 				else
 				{
 					status_leds_ledOn(led_ST2);
-				}
-			}
-		}
-	}
-}
-
-void loraDownlinkTask(void *pvParameters)
-{
-	static lora_driver_payload_t _lora_downlink_payload;
-	static int8_t servoValue;
-	
-	for (;;)
-	{
-		if (_downlinkMessageBuffer != NULL)
-		{
-			xMessageBufferReceive(_downlinkMessageBuffer, &_lora_downlink_payload, sizeof(lora_driver_payload_t), portMAX_DELAY);
-			
-			if (_lora_downlink_payload.len > 0) // Check that we have got the expected bytes
-			{
-				xSemaphoreTake(_mutexSemphr, portMAX_DELAY);
-				// Just for Debug
-				printf("DOWN LINK: from port: %d with %d bytes received! \n", _lora_downlink_payload.port_no, _lora_downlink_payload.len);
-				// decode the payload into our variables
-				servoValue = _lora_downlink_payload.bytes[0];
-				printf("VALUE FROM DOWNLINK: %d \n", servoValue);
-				xSemaphoreGive(_mutexSemphr);
-				
-				if (_rc_servo_queue != NULL)
-				{
-					rcServo_Command_t cmd;
-					
-					if (servoValue == 20)
-					{
-						cmd = LOWER;
-						xQueueSend(_rc_servo_queue, &cmd, portMAX_DELAY);
-					}
-					
-					if (servoValue == 40)
-					{
-						cmd = RAISE;
-						xQueueSend(_rc_servo_queue, &cmd, portMAX_DELAY);
-					}
 				}
 			}
 		}

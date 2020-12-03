@@ -34,7 +34,6 @@ void setUpLoraDriver();
 //	Function to create the Lora task
 void createLoraTask(QueueHandle_t sendingQueue,
                     MessageBufferHandle_t downlinkMessageBuffer,
-                    QueueHandle_t rc_servo_queue,
                     SemaphoreHandle_t main_taskSyncSemphr,
 					SemaphoreHandle_t mutexSemphr);
 
