@@ -2,7 +2,7 @@
 * TEMP_HUM_SENSOR.c
 *
 * Created: 23/11/2020 11:07:08
-*  Author: fisch
+*  Author: Eduard
 */
 
 #include "TEMP_HUM_SENSOR.h"
@@ -41,9 +41,6 @@ void createTEMP_HUMTask(EventGroupHandle_t pvEventHandleMeasure, EventGroupHandl
 	//	Initialize private fields with 0
 	lastTemperature = 0;
 	lastHumidity = 0;
-	
-	display_7seg_init(NULL);  // Initialize display driver
-	display_7seg_powerUp();   // Set to power up mode
 	
 	//	Upon task creation, initialize HIH8120
 	//	Set task priority to 1 (4 by default - 3)
@@ -101,8 +98,6 @@ void temp_humSensorTask(void *pvParameters)
 		{
 			lastTemperature = hih8120_getTemperature_x10();	      // return Temperature C [x10], returned value : int16_t
 			lastHumidity = hih8120_getHumidityPercent_x10();	  // return Relative humidity % [x10], returned value : uint16_t
-			float displayTemp = hih8120_getTemperature();         // get temperature as float to be displayed on the 7 segment display
-			display_7seg_display(displayTemp, 1);                 // display the value
 			//	set bit 0 in the New Data event group (Synchronize the new measurement of the HIH8120 sensor)
 			xEventGroupSetBits(_pvEventHandleNewData, TEMP_HUM_READY_BIT);
 		}

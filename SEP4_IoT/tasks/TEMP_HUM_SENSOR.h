@@ -18,8 +18,6 @@
 #include <hih8120.h>
 //	Standard I/O dependency
 #include <stdio.h>
-//  7 segment display driver
-#include <display_7seg.h>
 
 
 /*	A)	Creation of the TEMP_HUM task, takes as arguments two event groups (for synchronization)

@@ -1,6 +1,6 @@
 /*
 * main.c
-* Author : Eduard
+* Author : Eduard, Toma
 *
 */
 

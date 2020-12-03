@@ -19,6 +19,8 @@
 #include <queue.h>
 #include <message_buffer.h>
 #include <stdio_driver.h>
+#include <display_7seg.h>
+
 
 // Method that creates the main task
 void createMainTask();

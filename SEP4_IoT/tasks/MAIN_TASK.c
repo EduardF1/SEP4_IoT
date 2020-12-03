@@ -17,6 +17,7 @@ static EventGroupHandle_t pvEventHandleMeasure;    // Event group handle for the
 static EventGroupHandle_t pvEventHandleNewData;    // Event group handle for the new data ready bits
 static QueueHandle_t sendingQueue;                 // Queue used to send the Lora payload to the Lora up link task
 static SemaphoreHandle_t main_taskSyncSemphr;      // Semaphore for blocking the main task until Lora is connected to the up link
+static size_t remainingHeapSpace;                  // Variable to hold the remaining heap space of the program
 
 // Main task function declaration
 void mainTask(void *pvParameters);
@@ -31,6 +32,8 @@ void createMainTask()
 	sendingQueue = xQueueCreate(1, sizeof(lora_driver_payload_t));    // Create the Queue that sends the payload to Lora up link
 	
 	createLoraTask(sendingQueue, main_taskSyncSemphr);                // Create the Lora Task
+	display_7seg_init(NULL);                                          // Initialize display driver
+	display_7seg_powerUp();                                           // Set to power up mode
 	createCO2SensorTask(pvEventHandleMeasure, pvEventHandleNewData);  // Create the CO2 sensor task
 	createTEMP_HUMTask(pvEventHandleMeasure, pvEventHandleNewData);   // Create the temperature and humidity sensor task
 	
@@ -41,6 +44,9 @@ void createMainTask()
 	NULL,                                         // pvParameters
 	configMAX_PRIORITIES - 3,                     // Task priority
 	&main_task_task_handle);                      // Task handle
+	
+	remainingHeapSpace = xPortGetFreeHeapSize();                     // Get the total amount of heap space that remains unallocated
+	display_7seg_display((float)remainingHeapSpace, 0);              // Display it on the 7 segment display for information
 }
 
 // Task function body
@@ -76,5 +82,8 @@ void mainTask(void *pvParameters)
 		}
 		
 		vTaskDelay(ONE_MINUTE_DELAY);  // Wait 1 minute, then loop over again
+		
+		remainingHeapSpace = xPortGetFreeHeapSize();          // Get the total amount of heap space that remains unallocated
+		display_7seg_display((float)remainingHeapSpace, 0);   // Display it on the 7 segment display for information
 	}
 }
