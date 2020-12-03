@@ -2,7 +2,7 @@
  * temp_hum_sensor.h
  *
  * Created: 23/11/2020 01:09:55
- *  Author: fisch
+ *  Author: Eduard
  */ 
 
 #ifndef	TEMP_HUM_SENSOR_H_

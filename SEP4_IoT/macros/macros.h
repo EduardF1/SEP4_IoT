@@ -1,9 +1,9 @@
 /*
- * macros.h
- *
- * Created: 27/11/2020 03.15.26
- *  Author: Toma
- */ 
+* macros.h
+*
+* Created: 27/11/2020 03.15.26
+*  Author: Toma
+*/
 
 
 #ifndef MACROS_H_
@@ -31,7 +31,7 @@
 typedef enum rcServo_Command{
 	LOWER,
 	RAISE
-	}rcServo_Command_t;
+}rcServo_Command_t;
 
 
 #endif /* MACROS_H_ */

@@ -25,6 +25,9 @@ void setHumiditySensorData(uint16_t humidity);
 // Function to set the temperature value to the lora_driver_payload_t
 void setTemperatureSensorData(int16_t temperature);
 
+// Function to set the shaft status value to the lora_driver_payload_t
+void setCurrentShaftStatus(int8_t shaftStatus);
+
 // Function to get the lora_driver_payload_t for the assigned port number
 lora_driver_payload_t getLoraPayload(uint8_t port_no);
 

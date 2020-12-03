@@ -2,7 +2,7 @@
 * LORA.h
 *
 * Created: 27/11/2020 19:44:17
-*  Author: Eduard
+*  Authors: Eduard, Toma
 */
 
 
@@ -31,8 +31,12 @@
 //	Function to setup the Lora driver
 void setUpLoraDriver();
 
-//	Function to create the Lora task, takes a queue and a semaphore as arguments
-void createLoraTask(QueueHandle_t sendingQueue, SemaphoreHandle_t main_taskSyncSemphr);
+//	Function to create the Lora task
+void createLoraTask(QueueHandle_t sendingQueue,
+                    MessageBufferHandle_t downlinkMessageBuffer,
+                    QueueHandle_t rc_servo_queue,
+                    SemaphoreHandle_t main_taskSyncSemphr,
+					SemaphoreHandle_t mutexSemphr);
 
 
 #endif /* LORA_H_ */
