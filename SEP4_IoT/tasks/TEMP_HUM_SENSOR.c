@@ -94,7 +94,8 @@ void temp_humSensorTask(void *pvParameters)
 				flag++;
 			} while ((flag < 10) && (HIH8120_TWI_BUSY == hih8120_returnCode));	// up to 10 times (and if the two wire/I2C interface is busy)
 		}
-		else if(hih8120_returnCode == HIH8120_OK)	//	if the initial measurement did occur
+		
+		if(hih8120_returnCode == HIH8120_OK)	//	if any measurement occurred
 		{
 			lastTemperature = hih8120_getTemperature_x10();	      // return Temperature C [x10], returned value : int16_t
 			lastHumidity = hih8120_getHumidityPercent_x10();	  // return Relative humidity % [x10], returned value : uint16_t
