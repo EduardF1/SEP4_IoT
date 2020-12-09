@@ -74,10 +74,34 @@ void co2SensorTask(void *pvParameters)
 		// Take measuring and get the return code
 		returnCode = mh_z19_takeMeassuring();
 		
+		if (returnCode != MHZ19_OK)
+		{
+			int flag = 0;
+			do 
+			{
+				returnCode = mh_z19_takeMeassuring();
+				flag++;
+				vTaskDelay(10);
+			} while ((flag < 10) && returnCode == MHZ19_NO_MEASSURING_AVAILABLE);
+		}
+		
 		// If return code is OK then set the ready bit
 		if (returnCode == MHZ19_OK)
 		{
-			xEventGroupSetBits(_pvEventHandleNewData, CO2_READY_BIT);
+			if (lastCO2ppm == 0)
+			{
+				// Try again
+				returnCode = mh_z19_takeMeassuring();
+				
+				if (returnCode == MHZ19_OK)
+				{
+					xEventGroupSetBits(_pvEventHandleNewData, CO2_READY_BIT);
+				}
+			}
+			else
+			{
+				xEventGroupSetBits(_pvEventHandleNewData, CO2_READY_BIT);
+			}
 		}
 	}
 }
