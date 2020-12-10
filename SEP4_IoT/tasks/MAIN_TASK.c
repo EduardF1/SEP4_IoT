@@ -13,6 +13,7 @@
 #include "LORA.h"
 #include "LORA_DOWNLINK.h"
 #include "RC_SERVO.h"
+#include "PIR_SENSOR.h"
 
 static TaskHandle_t main_task_task_handle = NULL;          // TaskHandle for the task
 static EventGroupHandle_t pvEventHandleMeasure;            // Event group handle for the measure bits
@@ -50,16 +51,17 @@ void createMainTask()
 		downlinkMessageBuffer != NULL)
 	{
 		xSemaphoreGive(mutexSemphr);  // Make the Mutex available for use, by initially "Giving" the Semaphore.
-		display_7seg_init(NULL);                                          // Initialize display driver
-		display_7seg_powerUp();                                           // Set to power up mode
 		remainingHeapSpace = xPortGetFreeHeapSize();                      // Get the total amount of heap space that remains unallocated
-		display_7seg_display((float)remainingHeapSpace, 0);               // Display it on the 7 segment display for information
 		
 		createLoraTask(sendingQueue, downlinkMessageBuffer, main_taskSyncSemphr, mutexSemphr);
 		createLoraDownlinkTask(downlinkMessageBuffer, rc_servo_queue, mutexSemphr);
 		createCO2SensorTask(pvEventHandleMeasure, pvEventHandleNewData);  // Create the CO2 sensor task
+		display_7seg_init(NULL);                                          // Initialize display driver
+		display_7seg_powerUp();                                           // Set to power up mode
+		display_7seg_display((float)remainingHeapSpace, 0);               // Display the free heap size on the 7 segment display
 		createTEMP_HUMTask(pvEventHandleMeasure, pvEventHandleNewData);   // Create the temperature and humidity sensor task
 		createRC_SERVOTask(rc_servo_queue, mutexSemphr);                  // Create the servo task
+		createPIRsensorTask();                                            // Create the PIR sensor task
 		
 		// Create the main task in FreeRTOS
 		xTaskCreate(mainTask,                         // function that implements the task body
@@ -96,16 +98,19 @@ void mainTask(void *pvParameters)
 			int16_t temperature = getTemperature();       // Get latest temperature value
 			uint16_t humidity = getHumidity();            // Get latest humidity value
 			uint8_t shaftStatus = getShaftStatus();       // Get the current shaft status
+			uint16_t people = getPeopleCount();           // Get the current count of people
 			
 			setCo2PpmSensorData(co2Measurement);          // Set CO2 ppm value to the Lora payload
 			setTemperatureSensorData(temperature);        // Set temperature value to the Lora payload
 			setHumiditySensorData(humidity);              // Set humidity value to the Lora payload
 			setCurrentShaftStatus(shaftStatus);           // Set shaft status to the Lora payload
+			setPeopleCount(people);                       // Set the people count to the Lora payload
 			
 			lora_driver_payload_t lora_payload = getLoraPayload(LORA_PAYLOAD_PORT_NO);  // Get the payload with the assigned port number
 			
 			// Print the new measurements from the sensors and shaft status
-			printf(" TEMP: %d \n HUMIDITY: %d \n CO2: %d \n SHAFT: %d \n", temperature, humidity, co2Measurement, shaftStatus);
+			printf(" TEMP: %d \n HUMIDITY: %d \n CO2: %d \n SHAFT: %d \n PEOPLE: %d \n", 
+			temperature, humidity, co2Measurement, shaftStatus, people);
 			
 			xQueueSend(sendingQueue, (void *) &lora_payload, portMAX_DELAY); // Send the payload to the Lora up link task Queue
 		}

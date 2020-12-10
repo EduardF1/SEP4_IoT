@@ -28,6 +28,9 @@ void setTemperatureSensorData(int16_t temperature);
 // Function to set the shaft status value to the lora_driver_payload_t
 void setCurrentShaftStatus(int8_t shaftStatus);
 
+// Function to set the number of people to the lora_driver_payload_t
+void setPeopleCount(uint16_t peopleCount);
+
 // Function to get the lora_driver_payload_t for the assigned port number
 lora_driver_payload_t getLoraPayload(uint8_t port_no);
 

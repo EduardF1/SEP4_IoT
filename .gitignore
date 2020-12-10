@@ -51,3 +51,5 @@
 /SEP4_IoT/Debug/tasks/RC_SERVO.o
 /SEP4_IoT/Debug/tasks/LORA_DOWNLINK.d
 /SEP4_IoT/Debug/tasks/LORA_DOWNLINK.o
+/SEP4_IoT/Debug/tasks/PIR_SENSOR.d
+/SEP4_IoT/Debug/tasks/PIR_SENSOR.o
