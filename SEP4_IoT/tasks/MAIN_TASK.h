@@ -24,6 +24,7 @@
 
 // Method that creates the main task
 void createMainTask();
+void countDownToNextLoop();
 
 
 #endif /* MAIN_TASK_H_ */

@@ -115,9 +115,44 @@ void mainTask(void *pvParameters)
 			xQueueSend(sendingQueue, (void *) &lora_payload, portMAX_DELAY); // Send the payload to the Lora up link task Queue
 		}
 		
-		vTaskDelay(ONE_MINUTE_DELAY);  // Wait 1 minute, then loop over again
+		countDownToNextLoop();  // Wait ~1 minute, then loop over again
 		
 		remainingHeapSpace = xPortGetFreeHeapSize();          // Get the total amount of heap space that remains unallocated
 		display_7seg_display((float)remainingHeapSpace, 0);   // Display it on the 7 segment display for information
 	}
+}
+
+void countDownToNextLoop()
+{
+	PORTA ^= _BV(PA7);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA6);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA5);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA4);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA3);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA2);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA1);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA0);
+	vTaskDelay(FIVE_SECOND_DELAY);
+	PORTA ^= _BV(PA0);
+	vTaskDelay(THREE_SECOND_DELAY);
+	PORTA ^= _BV(PA1);
+	vTaskDelay(THREE_SECOND_DELAY);
+	PORTA ^= _BV(PA2);
+	vTaskDelay(THREE_SECOND_DELAY);
+	PORTA ^= _BV(PA3);
+	vTaskDelay(THREE_SECOND_DELAY);
+	PORTA ^= _BV(PA4);
+	vTaskDelay(THREE_SECOND_DELAY);
+	PORTA ^= _BV(PA5);
+	vTaskDelay(THREE_SECOND_DELAY);
+	PORTA ^= _BV(PA6);
+	vTaskDelay(THREE_SECOND_DELAY);
+	PORTA ^= _BV(PA7);
 }
