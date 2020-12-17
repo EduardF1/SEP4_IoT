@@ -1,0 +1,4 @@
+[submodule "SEP4_IoT_Test"]
+	path = SEP4_IoT_Test
+	url = https://github.com/EduardF1/SEP4_IoT_Test
+	branch = master
